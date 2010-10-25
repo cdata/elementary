@@ -4,14 +4,15 @@
         
         extend: function () {
             
-            var target = arguments[0] || {}, 
+            var options = arguments,
+                target = options[0] || {}, 
                 other, 
                 property,
                 i;
             
-            for (i = 1; i < arguments.length; i++) {
+            for (i = 1; i < options.length; i++) {
                 
-                if ((other = arguments[i]) != null) {
+                if ((other = options[i]) != null) {
                     
                     for (property in other) {
                         
