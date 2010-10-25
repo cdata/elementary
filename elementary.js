@@ -1,14 +1,15 @@
-(function(context) {
-    var $x = 10;
+(function (context) {
+    
     context.e = context.e || {
         
-        extend: function() {
+        extend: function () {
             
             var target = arguments[0] || {}, 
                 other, 
-                property;
+                property,
+                i;
             
-            for (var i = 1; i < arguments.length; i++) {
+            for (i = 1; i < arguments.length; i++) {
                 
                 if ((other = arguments[i]) != null) {
                     
@@ -26,9 +27,6 @@
             }
             
             return target;
-        },
-        
-        
+        }
     };
-    
 })(this);
