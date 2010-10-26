@@ -183,4 +183,18 @@
             result(partition[0].length == 1 && partition[1].length == 2, 'Partition of object');
         }
     );
+    
+    test(
+        'Elementary "string"',
+        function() {
+            
+            var testString = "   Hello, this is some <p>text</p>, and it con   tains lots of   weird whitespacing             \
+                                    \
+                                                ",
+                controlString = "Hello, this is some <p>text</p>, and it con   tains lots of   weird whitespacing",
+                resultString = e.string.trim(testString);
+            
+            result(controlString == resultString, "Whitespace trimming");
+        }
+    );
 })();

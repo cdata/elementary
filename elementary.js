@@ -45,7 +45,7 @@
         },
         isObject = function(value) {
             
-            return isFunction(value) || toString.call(value) == '[object Object]' && !isArray(value);
+            return isFunction(value) || toString.call(value) == '[object Object]';
         },
         clone = function (value) {
             
@@ -87,7 +87,19 @@
             );
             
             return [left, right];
-        };
+        },
+        string = (function() {
+            
+            var trim = function(string) {
+                
+                return string.replace(/^\s*|\s*$/g, "");
+            };
+            
+            return {
+                
+                trim: trim
+            };
+        })();
     
     context.e = context.e || {
         
@@ -97,6 +109,7 @@
         isObject: isObject,
         clone: clone,
         each: each,
-        partition: partition
+        partition: partition,
+        string: string
     };
 })(this);
