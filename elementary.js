@@ -26,24 +26,44 @@
         }
         
         return target;
-    };
-    
-    var clone = function (value) {
+    },
+    clone = function (value) {
         
         if (typeof value == 'object') {
             
             if (valuet.length)
                 return value.concat();
             else
-                return e.extend({}, value);
+                return extend({}, value);
         }
         
         return value;
+    },
+    each = function (object, callback) {
+        
+        var length = object.length,
+            i;
+        
+        if (length === undefined) {
+            
+            for (i in object) {
+                
+                if(!callback.call(object[i], i, object[i])) {
+                    
+                    break;
+                }
+            }
+            
+        } else {
+            
+            for(i = 0; i < length && callback.call(object[i], i, object[i]); i++) {}
+        }
     };
     
     context.e = context.e || {
         
         extend: extend,
-        clone: clone
+        clone: clone,
+        each: each
     };
 })(this);
