@@ -1,3 +1,9 @@
+/* Elementary JavaScript Library
+ *
+ * Copyright 2010, Christopher Joel
+ * Dual licensed under the MIT & GPLv2 licenses.
+ * See MIT-LICENSE.txt & GPL-LICENSE.txt
+ */
 (function (context) {
     
     var toString = Object.prototype.toString,
@@ -39,7 +45,7 @@
         },
         isObject = function(value) {
             
-            return isFunction(value) || typeof value == 'object' && !isArray(value);
+            return isFunction(value) || toString.call(value) == '[object Object]' && !isArray(value);
         },
         clone = function (value) {
             
@@ -54,13 +60,13 @@
             
             if (isArray(object)) {
                 
-                for(i = 0; i < object.length && callback.call(object[i], i, object[i]); i++) {}
+                for(i = 0; i < object.length && callback.call(object[i], i, object[i]) !== false; i++) {}
                 
             } else {
                 
                 for (i in object) {
                     
-                    if (!callback.call(object[i], i, object[i])) {
+                    if (callback.call(object[i], i, object[i]) === false) {
                         
                         break;
                     }
@@ -71,17 +77,14 @@
             
             var left = [],
                 right = [];
-            
-            if(isArray(array)) {
-                
-                each(
-                    array,
-                    function(i, e) {
-                        
-                        filter(e) ? push.call(array, e) : push.call(array, e);
-                    }
-                );
-            }
+              
+            each(
+                array,
+                function(i, e) {
+                    
+                    filter(e) ? push.call(left, e) : push.call(right, e);
+                }
+            );
             
             return [left, right];
         };
