@@ -8,17 +8,18 @@
     
     var toString = Object.prototype.toString,
         push = Array.prototype.push,
+        concat = Array.prototype.concat,
         extend = function () {
             
             var options = arguments,
                 target = options[0] || {}, 
                 other, 
                 property,
-                i;
+                iter;
             
-            for (i = 1; i < options.length; i++) {
+            for (iter = 1; iter < options.length; iter++) {
                 
-                if ((other = options[i]) != null) {
+                if ((other = options[iter]) != null) {
                     
                     for (property in other) {
                         
@@ -35,81 +36,119 @@
             
             return target;
         },
-        isArray = function(value) {
+        isArray = function (value) {
             
             return toString.call(value) === '[object Array]';
         },
-        isFunction = function(value) {
+        isFunction = function (value) {
             
             return toString.call(value) === '[object Function]';
         },
-        isObject = function(value) {
+        isObject = function (value) {
             
             return isFunction(value) || toString.call(value) == '[object Object]';
         },
         clone = function (value) {
             
-            if (isArray(value))
-                return value.concat();
-            else
-                return extend({}, value);
+            return isArray(value) ? value.concat() : extend({}, value);
         },
         each = function (object, callback) {
             
-            var i;
+            var iter;
             
             if (isArray(object)) {
                 
-                for(i = 0; i < object.length && callback.call(object[i], i, object[i]) !== false; i++) {}
+                for (iter = 0; iter < object.length && callback.call(object[iter], iter, object[iter]) !== false; iter++) {}
                 
             } else {
                 
-                for (i in object) {
-                    
-                    if (callback.call(object[i], i, object[i]) === false) {
-                        
+                for (iter in object)
+                    if (callback.call(object[iter], iter, object[iter]) === false)
                         break;
-                    }
-                }
             }
         },
-        partition = function(array, filter) {
+        map = function (array, filter) {
+            
+            var result = [];
+            
+            each(
+                array,
+                function(index, element) {
+                    
+                    push.call(result, filter.call(array, index, element));
+                }
+            );
+            
+            return result;
+        },
+        partition = function (object, filter) {
             
             var left = [],
                 right = [];
               
             each(
-                array,
-                function(i, e) {
+                object,
+                function (index, element) {
                     
-                    filter(e) ? push.call(left, e) : push.call(right, e);
+                    filter(element) ? push.call(left, element) : push.call(right, element);
                 }
             );
             
             return [left, right];
         },
-        string = (function() {
+        flatten = function (object) {
             
-            var trim = function(string) {
-                
-                return string.replace(/^\s*|\s*$/g, "");
-            };
+            var result = [];
             
-            return {
-                
-                trim: trim
-            };
-        })();
+            each(
+                object,
+                function (index, element) {
+                    
+                    if (isArray(element))
+                        result = concat.call(result, flatten(element));
+                    else
+                        push.call(result, element);
+                }
+            );
+            
+            return result;
+        },
+        reduce = function (array, filter) {
+            
+            var result;
+            
+            each(
+                array,
+                function (index, element) {
+                    
+                    result = filter.call(array, index, element, result);
+                }
+            );
+        },
+        trim = function (string) {
+            
+            return string.replace(/^\s*|\s*$/g, "");
+        },
+        elementary = {
+            extend: extend,
+            isArray: isArray,
+            isFunction: isFunction,
+            isObject: isObject,
+            clone: clone,
+            each: each,
+            map: map,
+            partition: partition,
+            flatten: flatten,
+            reduce: reduce,
+            trim: trim
+        };
     
-    context.e = context.e || {
+    context.elementary = context.elementary || elementary;
+    context.$ = context.$ || {};
+    
+    for(var property in elementary) {
         
-        extend: extend,
-        isArray: isArray,
-        isFunction: isFunction,
-        isObject: isObject,
-        clone: clone,
-        each: each,
-        partition: partition,
-        string: string
-    };
+        $[property] = $[property] || elementary[property];
+    }
+    
 })(this);
