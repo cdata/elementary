@@ -26,7 +26,7 @@
                         var targetProperty = target[property],
                             otherProperty = other[property];
                         
-                        if (otherProperty !== undefined && targetProperty !== otherProperty) {
+                        if (otherProperty !== undefined && other.hasOwnProperty(property)) {
                             
                             target[property] = otherProperty;
                         }
@@ -124,10 +124,76 @@
                     result = filter.call(array, index, element, result);
                 }
             );
+            
+            return result;
         },
         trim = function (string) {
             
             return string.replace(/^\s*|\s*$/g, "");
+        },
+        classify = function (object) {
+            
+            return extend(
+                object,
+                {
+                    subclass: (function() {
+                        
+                        var subclassing = false;
+                        
+                        return function (properties) {
+                            
+                            var Self = this,
+                                parentClass = self.prototype,
+                                nextPrototype,
+                                NextClass,
+                                property,
+                                propertyValue;
+                            
+                            subclassing = true;
+                            nextPrototype = new Self();
+                            subclassing = false;
+                            
+                            for (var property in properties) {
+                                
+                                propertyValue = properties[property];
+                                
+                                if(isFunction(propertyValue)) {
+                                    
+                                    nextPrototype[property] = function() {
+                                        
+                                        this.superClass = parentClass;
+                                        this.superMethod = parentClass[property] || function() {};
+                                        return propertyValue.apply(this, arguments);
+                                    };
+                                } else if(isObject(propertyValue)) {
+                                    
+                                    nextPrototype[property] = extend(
+                                        {},
+                                        parentClass[property],
+                                        propertyValue
+                                    );
+                                } else {
+                                    
+                                    nextPrototype[property] = propertyValue;
+                                }
+                            }
+                            
+                            NextClass = function() {
+                                if(!subclassing && this._construct) {
+                                    
+                                    this._construct.apply(this, arguments);
+                                }
+                            };
+                            
+                            NextClass.prototype = nextPrototype;
+                            NextClass.constructor = NextClass;
+                            NextClass.subclass = arguments.callee;
+                            
+                            return NextClass;
+                        }
+                    })()
+                }
+            );
         },
         elementary = {
             extend: extend,
@@ -140,7 +206,8 @@
             partition: partition,
             flatten: flatten,
             reduce: reduce,
-            trim: trim
+            trim: trim,
+            classify: classify
         };
     
     context.elementary = context.elementary || elementary;

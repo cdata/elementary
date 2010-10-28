@@ -155,6 +155,14 @@
     );
     
     test(
+        'Elementary "map"',
+        function() {
+            
+            
+        }
+    );
+    
+    test(
         'Elementary "partition"',
         function() {
             
@@ -203,7 +211,15 @@
     );
     
     test(
-        'Elementary "string"',
+        'Elementary "reduce"',
+        function() {
+            
+            
+        }
+    );
+    
+    test(
+        'Elementary "trim"',
         function() {
             
             var testString = "   Hello, this is some <p>text</p>, and it con   tains lots of   weird whitespacing             \
@@ -213,6 +229,14 @@
                 resultString = $.trim(testString);
             
             result(controlString == resultString, "Whitespace trimming");
+        }
+    );
+    
+    test(
+        'Elementary "classify"',
+        function() {
+            
+            
         }
     );
 })();
